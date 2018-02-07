@@ -46,7 +46,7 @@ import static de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType;
 import static de.robv.android.xposed.XposedHelpers.newInstance;
 
 
-public class Main implements IXposedHookLoadPackage {
+public class XposedMain implements IXposedHookLoadPackage {
 
 
     private static Object requestCaller;
