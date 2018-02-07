@@ -135,11 +135,11 @@ public class XposedMain implements IXposedHookLoadPackage {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     ContentValues contentValues = (ContentValues) param.args[2];
                     String tableName = (String) param.args[0];
-                    log("##########SQLiteDatabase tableName:" + tableName);
 
                     if (TextUtils.isEmpty(tableName) || !tableName.equals("message")) {
                         return;
                     }
+                    log("##########SQLiteDatabase tableName:" + tableName);
                     Integer type = contentValues.getAsInteger("type");
                     log("##########SQLiteDatabase type:" + type);
 
@@ -189,32 +189,6 @@ public class XposedMain implements IXposedHookLoadPackage {
                     }
                 }
             });
-
-            findAndHookMethod("com.tencent.mm.plugin.profile.ui.ContactInfoUI", lpparam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    if (PreferencesUtils.showWechatId()) {
-                        Activity activity = (Activity) param.thisObject;
-                        ClipboardManager cmb = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-                        String wechatId = activity.getIntent().getStringExtra("Contact_User");
-                        cmb.setText(wechatId);
-                        Toast.makeText(activity, "微信ID:" + wechatId + "已复制到剪切板", LENGTH_LONG).show();
-                    }
-                }
-            });
-
-            findAndHookMethod("com.tencent.mm.plugin.chatroom.ui.ChatroomInfoUI", lpparam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    if (PreferencesUtils.showWechatId()) {
-                        Activity activity = (Activity) param.thisObject;
-                        String wechatId = activity.getIntent().getStringExtra("RoomInfo_Id");
-                        ClipboardManager cmb = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-                        cmb.setText(wechatId);
-                        Toast.makeText(activity, "微信ID:" + wechatId + "已复制到剪切板", LENGTH_LONG).show();
-                    }
-                }
-            });
         }
     }
 
@@ -227,47 +201,18 @@ public class XposedMain implements IXposedHookLoadPackage {
         }
 
         String talker = contentValues.getAsString("talker");
-        log("##########handleLuckyMoney status:" + talker);
-
-        String blackList = PreferencesUtils.blackList();
-        if (!isEmpty(blackList)) {
-            for (String wechatId : blackList.split(",")) {
-                if (talker.equals(wechatId.trim())) {
-                    return;
-                }
-            }
-        }
-
-        int isSend = contentValues.getAsInteger("isSend");
-        if (PreferencesUtils.notSelf() && isSend != 0) {
-            return;
-        }
-
-
-        if (PreferencesUtils.notWhisper() && !isGroupTalk(talker)) {
-            return;
-        }
-
-        if (!isGroupTalk(talker) && isSend != 0) {
-            return;
-        }
+        log("##########handleLuckyMoney talker:" + talker);
+        log("##########handleLuckyMoney contentValues:" + contentValues);
 
         String content = contentValues.getAsString("content");
+        log("##########handleLuckyMoney content:" + content);
         if (!content.startsWith("<msg")) {
             content = content.substring(content.indexOf("<msg"));
         }
 
+
         JSONObject wcpayinfo = new XmlToJson.Builder(content).build()
                 .getJSONObject("msg").getJSONObject("appmsg").getJSONObject("wcpayinfo");
-        String senderTitle = wcpayinfo.getString("sendertitle");
-        String notContainsWords = PreferencesUtils.notContains();
-        if (!isEmpty(notContainsWords)) {
-            for (String word : notContainsWords.split(",")) {
-                if (senderTitle.contains(word)) {
-                    return;
-                }
-            }
-        }
 
         String nativeUrlString = wcpayinfo.getString("nativeurl");
         Uri nativeUrl = Uri.parse(nativeUrlString);
@@ -288,13 +233,14 @@ public class XposedMain implements IXposedHookLoadPackage {
     }
 
     private void handleTransfer(ContentValues contentValues, LoadPackageParam lpparam) throws IOException, XmlPullParserException, PackageManager.NameNotFoundException, InterruptedException, JSONException {
-        if (!PreferencesUtils.receiveTransfer()) {
-            return;
-        }
+        log("##########handleTransfer contentValues:" + contentValues.toString());
+
         JSONObject wcpayinfo = new XmlToJson.Builder(contentValues.getAsString("content")).build()
                 .getJSONObject("msg").getJSONObject("appmsg").getJSONObject("wcpayinfo");
 
         int paysubtype = wcpayinfo.getInt("paysubtype");
+        log("##########handleTransfer paysubtype:" + paysubtype);
+
         if (paysubtype != 1) {
             return;
         }
@@ -314,6 +260,7 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private int getDelayTime() {
         int delayTime = 0;
+        delayTime = getRandom(0, 1);
         return delayTime;
     }
 
