@@ -82,10 +82,10 @@ public class XposedMain implements IXposedHookLoadPackage {
                     ContentValues contentValues = (ContentValues) param.args[2];
                     String tableName = (String) param.args[0];
 
+                    log("##########DingdingSQLiteDatabase tableName:" + tableName);
                     if (TextUtils.isEmpty(tableName) || !tableName.equals("tblastmsg")) {
                         return;
                     }
-                    log("##########DingdingSQLiteDatabase tableName:" + tableName);
                     if (contentValues == null) {
                         return;
                     }
@@ -104,7 +104,6 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private void getDDRedPackage(ContentValues contentValues, LoadPackageParam lpparam) throws IllegalAccessException, InvocationTargetException, InstantiationException, JSONException {
         log("##########getDDRedPackage begin");
-        //RedPacketsRpc.b(Long sender, String clusterId, bmk<RedPacketsClusterPickingStatus> listener)
         Object redPacketsRpc = callStaticMethod(findClass(DDVersionParam.RedPacketsRpc, lpparam.classLoader), "a");
         Object redPacketsRpc$9 = findConstructorBestMatch(findClass(DDVersionParam.RedPacketsRpc + "$9", lpparam.classLoader), redPacketsRpc.getClass(), findClass(DDVersionParam.ApiEventListener, lpparam.classLoader)).newInstance(redPacketsRpc, null);
 

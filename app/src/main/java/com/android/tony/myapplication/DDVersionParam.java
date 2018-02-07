@@ -5,11 +5,11 @@ public class DDVersionParam {
 
     public static final String DD_PACKAGE_NAME = "com.alibaba.android.rimet";
 
-    public static String ApiEventListener = "bmk";
-    public static String ConversationChangeMaid = "cdz";
-    public static String ServiceFactory = "gcz";
-    public static String RedPacketsRpc = "bes";
-    public static String MessageDs = "fmf";
+    public static String ApiEventListener = "";
+    public static String ConversationChangeMaid = "";
+    public static String ServiceFactory = "";
+    public static String RedPacketsRpc = "";
+    public static String MessageDs = "";
 
     public static void init(String version) {
         switch (version) {
@@ -165,16 +165,16 @@ public class DDVersionParam {
             case "4.2.8":
                 ApiEventListener = "boo";
                 ConversationChangeMaid = "cgm";
-                ServiceFactory = "gip";
+                ServiceFactory = "giy";
                 RedPacketsRpc = "bgx";
-                MessageDs = "fqb";
+                MessageDs = "fqk";
                 break;
             default:
-                ApiEventListener = "bmk";
-                ConversationChangeMaid = "cdz";
-                ServiceFactory = "gfb";
-                RedPacketsRpc = "bes";
-                MessageDs = "fmf";
+                ApiEventListener = "boo";
+                ConversationChangeMaid = "cgm";
+                ServiceFactory = "giy";
+                RedPacketsRpc = "bgx";
+                MessageDs = "fqk";
         }
     }
 }
