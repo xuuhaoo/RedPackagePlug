@@ -59,7 +59,6 @@ public class XposedMain implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         log("handleLoadPackage:" + lpparam.packageName);
-        new HideModule().hide(lpparam);
         hookWechat(lpparam);
         hookDingDing(lpparam);
 
@@ -67,6 +66,8 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private void hookDingDing(final LoadPackageParam lpparam) throws PackageManager.NameNotFoundException {
         if (lpparam.packageName.equals(DD_PACKAGE_NAME)) {
+            new HideModule().hide(lpparam);
+
             if (isEmpty(dingdingVersion)) {
                 Context context = (Context) callMethod(callStaticMethod(findClass("android.app.ActivityThread", null), "currentActivityThread", new Object[0]), "getSystemContext", new Object[0]);
                 String versionName = context.getPackageManager().getPackageInfo(lpparam.packageName, 0).versionName;
@@ -121,6 +122,8 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private void hookWechat(final LoadPackageParam lpparam) throws PackageManager.NameNotFoundException {
         if (lpparam.packageName.equals(WECHAT_PACKAGE_NAME)) {
+            new HideModule().hide(lpparam);
+
             if (isEmpty(wechatVersion)) {
                 Context context = (Context) callMethod(callStaticMethod(findClass("android.app.ActivityThread", null), "currentActivityThread", new Object[0]), "getSystemContext", new Object[0]);
                 String versionName = context.getPackageManager().getPackageInfo(lpparam.packageName, 0).versionName;
@@ -312,9 +315,6 @@ public class XposedMain implements IXposedHookLoadPackage {
 
     private int getDelayTime() {
         int delayTime = 0;
-        if (PreferencesUtils.delay()) {
-            delayTime = getRandom(PreferencesUtils.delayMin(), PreferencesUtils.delayMax());
-        }
         return delayTime;
     }
 

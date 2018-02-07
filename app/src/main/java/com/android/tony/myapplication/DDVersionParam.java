@@ -162,6 +162,13 @@ public class DDVersionParam {
                 RedPacketsRpc = "bes";
                 MessageDs = "fmf";
                 break;
+            case "4.2.8":
+                ApiEventListener = "boo";
+                ConversationChangeMaid = "cgm";
+                ServiceFactory = "gip";
+                RedPacketsRpc = "bgx";
+                MessageDs = "fqb";
+                break;
             default:
                 ApiEventListener = "bmk";
                 ConversationChangeMaid = "cdz";
